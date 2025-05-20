@@ -2,9 +2,16 @@
 
 Console.WriteLine("Hello, Thread!");
 
+List<Thread> threads = new List<Thread>();
+
 for (int i = 0; i < 5; i++)
 {
     var thread = new Thread(() => DownloadImage(i));
+    threads.Add(thread);    
+}
+
+foreach (Thread thread in threads)
+{
     thread.Start();
 }
 
