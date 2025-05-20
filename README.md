@@ -12,7 +12,7 @@ Do rozpoczęcia tego kursu potrzebujesz następujących rzeczy:
 
 1. Sklonuj repozytorium Git
 ```
-git clone https://github.com/sulmar/...
+git clone https://github.com/sulmar/sages-t4b-multithread-async
 ```
 2. Zbuduj
 ```
