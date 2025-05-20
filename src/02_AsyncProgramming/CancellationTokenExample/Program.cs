@@ -11,14 +11,9 @@ Printer printer = new Printer();
 
 Task task = printer.PrintAsync("Document #1", cancellationToken);
 
-// Symulacja użytkownika anulującego zadanie po 3s
-// Ręczne anulowanie
-Task.Run(async () =>
-{
-    await Task.Delay(3500);
-    cts.Cancel();
-});
- 
+// Anulowanie zadania po określonym czasie
+cts.CancelAfter(3500);
+
 try
 {
     await task;
