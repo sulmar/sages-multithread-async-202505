@@ -3,9 +3,9 @@ Console.WriteLine("Hello, Tasks!");
 
 Printer printer = new Printer();
 
-printer.Print("Document #1");
-printer.Print("Document #2");
-printer.Print("Document #3");
+printer.PrintAsync("Document #1");
+printer.PrintAsync("Document #2");
+printer.PrintAsync("Document #3");
 
 Console.WriteLine("Finished.");
 Console.ReadLine();
@@ -18,5 +18,11 @@ public class Printer
         Console.WriteLine($"Printing '{content}' on thread {Thread.CurrentThread.ManagedThreadId}...");
         Thread.Sleep(TimeSpan.FromSeconds(1));
         Console.WriteLine($"Print completed.");
+    }
+
+
+    public Task PrintAsync(string content)
+    {
+        return Task.Run(() => Print(content));               
     }
 }
