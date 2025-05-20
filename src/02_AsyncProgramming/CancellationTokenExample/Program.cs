@@ -3,7 +3,8 @@ using System.Threading.Tasks;
 
 Console.WriteLine("Hello, Cancellation Token!");
 
-CancellationTokenSource cts = new CancellationTokenSource();
+// Automatyczne anulowanie zadania po określonym czasie 
+CancellationTokenSource cts = new CancellationTokenSource(3500);
 
 CancellationToken cancellationToken = cts.Token;
 
@@ -11,8 +12,8 @@ Printer printer = new Printer();
 
 Task task = printer.PrintAsync("Document #1", cancellationToken);
 
-// Anulowanie zadania po określonym czasie
-cts.CancelAfter(3500);
+// Anulowanie zadania po określonym czasie po wywołaniu Cancel
+// cts.CancelAfter(3500);
 
 try
 {
