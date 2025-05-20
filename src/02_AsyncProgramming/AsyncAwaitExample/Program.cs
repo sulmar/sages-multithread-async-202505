@@ -16,9 +16,11 @@ Console.WriteLine("Hello, Tasks!");
 //    downloader.DownloadImage(i);
 //}
 
+
 CostCalculator calculator = new CostCalculator();
-var cost = calculator.Calculate("Document #1");
-Console.WriteLine($"Cost: {cost:C2}");
+Task<decimal> costTask = calculator.CalculateAsync("Document #1");
+
+costTask.ContinueWith(task => Console.WriteLine($"Cost: {task.Result:C2}"));
 
 Console.WriteLine("Finished.");
 Console.ReadLine();
@@ -52,5 +54,10 @@ public class CostCalculator
 
         return content.Length * 0.05m;
 
+    }
+
+    public Task<decimal> CalculateAsync(string content)
+    {
+        return Task.Run(() => Calculate(content));
     }
 }
