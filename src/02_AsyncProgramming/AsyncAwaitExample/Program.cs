@@ -3,24 +3,20 @@ using AsyncAwaitExample;
 
 Console.WriteLine("Hello, Tasks!");
 
-//Printer printer = new Printer();
-
-//printer.PrintAsync("Document #1");
-//printer.PrintAsync("Document #2");
-//printer.PrintAsync("Document #3");
-
-//Downloader downloader = new Downloader();
-
-//for (int i = 0; i < 50; i++)
-//{
-//    downloader.DownloadImage(i);
-//}
-
-
+Printer printer = new Printer();
 CostCalculator calculator = new CostCalculator();
-Task<decimal> costTask = calculator.CalculateAsync("Document #1");
 
-costTask.ContinueWith(task => Console.WriteLine($"Cost: {task.Result:C2}"));
+
+// Synchroniczny
+printer.Print("Document #1");
+var cost = calculator.Calculate("Document #1");
+Console.WriteLine($"Cost: {cost:C2}");
+
+// Asynchroniczny
+printer.PrintAsync("Document #1")
+    .ContinueWith(t => calculator.CalculateAsync("Document #1")
+        .ContinueWith(task => Console.WriteLine($"Cost: {task.Result:C2}")));
+
 
 Console.WriteLine("Finished.");
 Console.ReadLine();
@@ -39,7 +35,7 @@ public class Printer
 
     public Task PrintAsync(string content)
     {
-        return Task.Run(() => Print(content));               
+        return Task.Run(() => Print(content));
     }
 }
 
