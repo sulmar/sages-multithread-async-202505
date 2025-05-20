@@ -50,6 +50,10 @@ public class PrinterService
         var printer = await GetPrinterAsync();
 
         await printer.PrintAsync("Document #1");
+
+        await printer.PrintAsync("Document #2");
+
+        await printer.PrintAsync("Document #3");
     }
 
     public Task<Printer> GetPrinterAsync() => lazyPrinter.Value;
@@ -59,6 +63,8 @@ public class Printer
 {
     public Task InitAsync()
     {
+        Console.WriteLine("Init Async called.");
+
         return Task.CompletedTask;
     }
 
