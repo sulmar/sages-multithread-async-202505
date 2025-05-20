@@ -3,28 +3,55 @@ using System.Threading.Tasks;
 
 Console.WriteLine("Hello, Cancellation Token!");
 
+CancellationTokenSource cts = new CancellationTokenSource();
+
+CancellationToken cancellationToken = cts.Token;
+
 Printer printer = new Printer();
-await printer.PrintAsync("Document #1");
 
-Console.WriteLine("Press Enter to exit.");
+Task task = printer.PrintAsync("Document #1", cancellationToken);
+
+// Symulacja użytkownika anulującego zadanie po 3s
+// Ręczne anulowanie
+Task.Run(async () =>
+{
+    await Task.Delay(3500);
+    cts.Cancel();
+});
+ 
+try
+{
+    await task;
+}
+catch (OperationCanceledException e)
+{
+    Console.WriteLine( "Printing Cancelled.");
+}
+
 Console.ReadLine();
-
-
+Console.WriteLine("Press Enter to exit.");
 
 class Printer
 {
 
-    public async Task PrintAsync(string content)
+    public async Task PrintAsync(string content, CancellationToken cancellationToken = default)
     {
         Console.WriteLine($"Printing '{content}' on thread {Thread.CurrentThread.ManagedThreadId}...");
 
         for (int i = 0; i < 5; i++)
         {
-            await Task.Delay(200);
+            Console.WriteLine($"cancellationToken.IsCancellationRequested: {cancellationToken.IsCancellationRequested}");
+            if (cancellationToken.IsCancellationRequested)
+            {
+                throw new OperationCanceledException();
+            }
+
+           // cancellationToken.ThrowIfCancellationRequested();
 
             Console.WriteLine($"...printing chunk {i + 1}"); // Drukowanie fragmentu strony
 
-            Thread.Sleep(TimeSpan.FromSeconds(1));
+            await Task.Delay(1000, cancellationToken);
+
         }
 
         Console.WriteLine($"Print completed.");
