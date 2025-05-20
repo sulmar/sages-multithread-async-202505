@@ -4,7 +4,8 @@ Console.WriteLine("Hello, Thread!");
 
 for (int i = 0; i < 5; i++)
 {
-    DownloadImage(i);
+    var thread = new Thread(() => DownloadImage(i));
+    thread.Start();
 }
 
 Console.WriteLine($"[Thread] Thread# {Thread.CurrentThread.ManagedThreadId} finished.");
