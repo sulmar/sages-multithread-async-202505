@@ -2,16 +2,20 @@
 
 Console.WriteLine("Hello, Thread!");
 
-List<Thread> threads = new List<Thread>();
+Queue<Thread> queue = new Queue<Thread>();
 
+// Przygotowanie kolejki zadań
 for (int i = 0; i < 5; i++)
 {
-    var thread = new Thread(() => DownloadImage(i));
-    threads.Add(thread);    
+    var thread = new Thread(() => DownloadImage(Random.Shared.Next(1, 1000)));
+    queue.Enqueue(thread);    
 }
 
-foreach (Thread thread in threads)
+
+// Pobranie i uruchomienie zadania z kolejki zadań
+while(queue.Count > 0)
 {
+    var thread = queue.Dequeue();
     thread.Start();
 }
 
