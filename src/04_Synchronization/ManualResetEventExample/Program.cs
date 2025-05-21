@@ -1,8 +1,17 @@
 ﻿
+using ManualResetEventExample;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 Console.WriteLine("Hello, ManualResetEvent!");
+
+
+HubEvents hub = new HubEvents();
+
+hub.SendSignal(100);
+
+
+return;
 
 
 var motionEvent = new ManualResetEvent(false);
