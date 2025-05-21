@@ -35,3 +35,12 @@ internal class Logger
         Console.WriteLine($"[Log] {DateTime.UtcNow}: {message}");
     }
 }
+
+
+// Singleton generyczny bezpieczny wielowątkowo 
+// Uwaga: wymaga od klasy aby posiadała publiczny lub protected bezparametrowy konstruktor, bo new() tego wymaga:
+public static class Singleton<T> where T : class, new()
+{
+    private static readonly Lazy<T> _instance = new(() => new T()); // bezpieczny wielowątkowo (domyślnie isThreadSafe == true).
+    public static T Instance => _instance.Value;
+}
