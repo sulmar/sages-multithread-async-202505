@@ -16,7 +16,7 @@ public class AsyncLazy<T>
 
     public AsyncLazy(Func<Task<T>> factory)
     {
-        _lazyTask = new Lazy<Task<T>>(factory);
+        _lazyTask = new Lazy<Task<T>>(factory, isThreadSafe: true);
     }
 
     public AsyncLazy(Lazy<Task<T>> lazyTask)
