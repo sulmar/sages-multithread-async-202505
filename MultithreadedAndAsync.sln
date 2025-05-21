@@ -103,6 +103,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesignPrinciplesExample", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImmutableObjectExample", "src\10_ThreadSafety\ImmutableObjectExample\ImmutableObjectExample.csproj", "{5347F8A9-0FBD-42F6-A448-755E3E47C037}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeriodicTimerExample", "src\02_AsyncProgramming\PeriodicTimerExample\PeriodicTimerExample.csproj", "{0206EBA2-6477-4BD3-A9DC-C6C8357021CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -581,6 +583,18 @@ Global
 		{5347F8A9-0FBD-42F6-A448-755E3E47C037}.Release|x64.Build.0 = Release|Any CPU
 		{5347F8A9-0FBD-42F6-A448-755E3E47C037}.Release|x86.ActiveCfg = Release|Any CPU
 		{5347F8A9-0FBD-42F6-A448-755E3E47C037}.Release|x86.Build.0 = Release|Any CPU
+		{0206EBA2-6477-4BD3-A9DC-C6C8357021CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0206EBA2-6477-4BD3-A9DC-C6C8357021CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0206EBA2-6477-4BD3-A9DC-C6C8357021CB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0206EBA2-6477-4BD3-A9DC-C6C8357021CB}.Debug|x64.Build.0 = Debug|Any CPU
+		{0206EBA2-6477-4BD3-A9DC-C6C8357021CB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0206EBA2-6477-4BD3-A9DC-C6C8357021CB}.Debug|x86.Build.0 = Debug|Any CPU
+		{0206EBA2-6477-4BD3-A9DC-C6C8357021CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0206EBA2-6477-4BD3-A9DC-C6C8357021CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0206EBA2-6477-4BD3-A9DC-C6C8357021CB}.Release|x64.ActiveCfg = Release|Any CPU
+		{0206EBA2-6477-4BD3-A9DC-C6C8357021CB}.Release|x64.Build.0 = Release|Any CPU
+		{0206EBA2-6477-4BD3-A9DC-C6C8357021CB}.Release|x86.ActiveCfg = Release|Any CPU
+		{0206EBA2-6477-4BD3-A9DC-C6C8357021CB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -635,5 +649,6 @@ Global
 		{499976C8-A871-00E7-8662-CE86916F7D07} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{A2E7EB6D-D441-4C30-856A-7C18F3AC6BF7} = {499976C8-A871-00E7-8662-CE86916F7D07}
 		{5347F8A9-0FBD-42F6-A448-755E3E47C037} = {499976C8-A871-00E7-8662-CE86916F7D07}
+		{0206EBA2-6477-4BD3-A9DC-C6C8357021CB} = {EA89A285-42BD-C54A-D203-47C040906023}
 	EndGlobalSection
 EndGlobal
