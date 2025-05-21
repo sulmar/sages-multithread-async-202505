@@ -12,7 +12,7 @@ Console.WriteLine("🚗 Startujemy analizę...");
 
 
 var gateService = new GateAccessService();
-await gateService.RunAsync();
+await gateService.RunTaskAsync();
 
 Console.WriteLine("🏁 Operacja zakończona.");
 
@@ -44,6 +44,32 @@ public class GateAccessService
 
         await Task.WhenAll(tasks);
     }
+
+    public async Task RunTaskAsync()
+    {
+        var camera = new CameraService(_barrier);
+        var rfid = new RfidService(_barrier);
+        var sensor = new VehicleSensorService(_barrier);
+
+        var initTasks = new[]
+        {
+            camera.InitAsync(),
+            rfid.InitAsync(),
+            sensor.InitAsync()
+        };
+
+        await Task.WhenAll(initTasks);
+
+        var processTasks = new[]
+        {
+            camera.ProcessAsync(),
+            rfid.ProcessAsync(),
+            sensor.ProcessAsync()
+        };
+
+        await Task.WhenAll(processTasks);
+
+    }
 }
 
 
@@ -58,16 +84,28 @@ public class CameraService
 
     public async Task RunAsync()
     {
-        Console.WriteLine("📸 [Kamera] Faza 1: Analiza...");
-        await Task.Delay(1000 + Random.Shared.Next(1000));
-        Console.WriteLine("📸 [Kamera] Faza 1: Rozpoznano tablicę.");
+        await InitAsync();
 
         _barrier.SignalAndWait(); // Synchronizacja
 
         // Faza 2 – może się wykonać zbyt wcześnie
+        await ProcessAsync();
+    }
+
+    public async Task InitAsync()
+    {
+        Console.WriteLine("📸 [Kamera] Faza 1: Analiza...");
+        await Task.Delay(1000 + Random.Shared.Next(1000));
+        Console.WriteLine("📸 [Kamera] Faza 1: Rozpoznano tablicę.");
+    }
+
+    public async Task ProcessAsync()
+    {
         Console.WriteLine("📸 [Kamera] Faza 2: Weryfikacja dostępu...");
         await Task.Delay(500);
     }
+
+    
 }
 
 public class RfidService
@@ -81,15 +119,25 @@ public class RfidService
 
     public async Task RunAsync()
     {
-        Console.WriteLine("📡 [RFID] Faza 1: Skanowanie...");
-        await Task.Delay(800 + Random.Shared.Next(500));
-        Console.WriteLine("📡 [RFID] Faza 1: Znaleziono token.");
+        await InitAsync();
 
         _barrier.SignalAndWait(); // Synchronizacja
 
+        await ProcessAsync();
+    }
+
+    public async Task ProcessAsync()
+    {
         // Faza 2 – może się wykonać zbyt wcześnie
         Console.WriteLine("📡 [RFID] Faza 2: Weryfikacja dostępu...");
         await Task.Delay(500);
+    }
+
+    public async Task InitAsync()
+    {
+        Console.WriteLine("📡 [RFID] Faza 1: Skanowanie...");
+        await Task.Delay(800 + Random.Shared.Next(500));
+        Console.WriteLine("📡 [RFID] Faza 1: Znaleziono token.");
     }
 }
 
@@ -104,17 +152,24 @@ public class VehicleSensorService
 
     public async Task RunAsync()
     {
-        Console.WriteLine("🛑 [Sensor] Faza 1: Detekcja pojazdu...");
-        await Task.Delay(500 + Random.Shared.Next(700));
-        Console.WriteLine("🛑 [Sensor] Faza 1: Pojazd obecny.");
+        await InitAsync();
 
         _barrier.SignalAndWait(); // Synchronizacja
 
+        await ProcessAsync();
+    }
+
+    public async Task ProcessAsync()
+    {
         // Faza 2 – może się wykonać zbyt wcześnie
         Console.WriteLine("🛑 [Sensor] Faza 2: Weryfikacja dostępu...");
         await Task.Delay(500);
     }
 
-
-
+    public async Task InitAsync()
+    {
+        Console.WriteLine("🛑 [Sensor] Faza 1: Detekcja pojazdu...");
+        await Task.Delay(500 + Random.Shared.Next(700));
+        Console.WriteLine("🛑 [Sensor] Faza 1: Pojazd obecny.");
+    }
 }
