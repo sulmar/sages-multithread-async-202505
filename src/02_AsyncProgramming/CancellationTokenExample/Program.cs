@@ -1,19 +1,29 @@
-﻿// See https://aka.ms/new-console-template for more information
-using System.Threading.Tasks;
-
+﻿
 Console.WriteLine("Hello, Cancellation Token!");
 
 // Automatyczne anulowanie zadania po określonym czasie 
-CancellationTokenSource cts = new CancellationTokenSource(3500);
+using var cts = new CancellationTokenSource(3500);
 
 CancellationToken cancellationToken = cts.Token;
+
+Console.WriteLine("Press Ctrl+C for cancel");
+Console.CancelKeyPress += (sender, e) =>
+{
+    Console.WriteLine("Stopping...");
+    e.Cancel = true;
+
+    // Anulowanie zadania natychmiastowe
+    // cts.Cancel();
+
+    // Anulowanie zadania po określonym czasie
+    cts.CancelAfter(1500);
+};
+
 
 Printer printer = new Printer();
 
 Task task = printer.PrintAsync("Document #1", cancellationToken);
 
-// Anulowanie zadania po określonym czasie po wywołaniu Cancel
-// cts.CancelAfter(3500);
 
 try
 {
@@ -21,7 +31,7 @@ try
 }
 catch (OperationCanceledException e)
 {
-    Console.WriteLine( "Printing Cancelled.");
+    Console.WriteLine( "Printing was canceled.");
 }
 
 Console.ReadLine();
@@ -36,13 +46,13 @@ class Printer
 
         for (int i = 0; i < 5; i++)
         {
-            Console.WriteLine($"cancellationToken.IsCancellationRequested: {cancellationToken.IsCancellationRequested}");
-            if (cancellationToken.IsCancellationRequested)
-            {
-                throw new OperationCanceledException();
-            }
+            //Console.WriteLine($"cancellationToken.IsCancellationRequested: {cancellationToken.IsCancellationRequested}");
+            //if (cancellationToken.IsCancellationRequested)
+            //{
+            //    throw new OperationCanceledException();
+            //}
 
-           // cancellationToken.ThrowIfCancellationRequested();
+           cancellationToken.ThrowIfCancellationRequested();
 
             Console.WriteLine($"...printing chunk {i + 1}"); // Drukowanie fragmentu strony
 
