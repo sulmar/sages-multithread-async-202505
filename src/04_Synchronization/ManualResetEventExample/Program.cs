@@ -4,13 +4,18 @@ using Microsoft.Extensions.Hosting;
 
 Console.WriteLine("Hello, ManualResetEvent!");
 
+
+var motionEvent = new ManualResetEvent(false);
+
 var host = Host.CreateDefaultBuilder(args)
             .ConfigureServices(services =>
-            {
-                services.AddSingleton<MotionDetectionService>();
-                services.AddSingleton<AlarmService>();
-                services.AddHostedService<Worker>();
-            })
+{
+services.AddSingleton(motionEvent);
+services.AddSingleton<MotionDetectionService>();
+services.AddSingleton<AlarmService>();
+services.AddSingleton<LightService>();
+services.AddHostedService<Worker>();
+})
             .Build();
 
 await host.RunAsync();
@@ -18,43 +23,66 @@ await host.RunAsync();
 
 public class MotionDetectionService
 {
-    public bool IsMotionDetected { get; private set; }
+    private readonly ManualResetEvent _motionEvent;
+
+    public MotionDetectionService(ManualResetEvent motionEvent)
+    {
+        _motionEvent = motionEvent;
+    }
 
     public void DetectMotion()
     {
         Console.WriteLine($"🎥 Motion detected at {DateTime.Now:HH:mm:ss}");
-        IsMotionDetected = true;
-    }
-
-    public void Reset()
-    {
-        IsMotionDetected = false;
+        _motionEvent.Set(); // Wysyła sygnał
     }
 }
 
 public class AlarmService
 {
-    private readonly MotionDetectionService _motionService;
+    private readonly ManualResetEvent motionEvent;
 
-    public AlarmService(MotionDetectionService motionService)
+    public AlarmService(ManualResetEvent motionEvent)
     {
-        _motionService = motionService;
+        this.motionEvent = motionEvent;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken cancellationToken) => Task.Factory.StartNew(() => Start(cancellationToken), TaskCreationOptions.LongRunning);
+
+    private void Start(CancellationToken cancellationToken)
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            if (_motionService.IsMotionDetected)
-            {
-                Console.WriteLine($"🚨 Alarm activated at {DateTime.Now:HH:mm:ss}");
-                _motionService.Reset();
-            }
+            motionEvent.WaitOne(); // Czeka na sygnał (np. od detektora ruchu)
 
-            await Task.Delay(100); // 👎 aktywne oczekiwanie (polling)
+            Console.WriteLine($"🚨 Alarm activated at {DateTime.Now:HH:mm:ss}");
         }
     }
 }
+
+
+public class LightService
+{
+    private readonly ManualResetEvent _motionEvent;
+
+    public LightService(ManualResetEvent motionEvent)
+    {
+        _motionEvent = motionEvent;
+    }
+
+    public Task StartAsync(CancellationToken cancellationToken) => Task.Factory.StartNew(() => Start(cancellationToken), TaskCreationOptions.LongRunning);
+
+    public void Start(CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            _motionEvent.WaitOne(); // Czeka na sygnał (np. od detektora ruchu)
+
+            Console.WriteLine($"💡 Light turned on at {DateTime.Now:HH:mm:ss}");
+            
+        }
+    }
+}
+
 
 
 
@@ -62,43 +90,31 @@ public class Worker : BackgroundService
 {
     private readonly MotionDetectionService _motionService;
     private readonly AlarmService _alarmService;
+    private readonly LightService _lightService;
+    private readonly ManualResetEvent _motionEvent;
 
-    public Worker(MotionDetectionService motionService, AlarmService alarmService)
+    public Worker(MotionDetectionService motionService, AlarmService alarmService, LightService lightService, ManualResetEvent motionEvent)
     {
         _motionService = motionService;
         _alarmService = alarmService;
+        _lightService = lightService;
+        _motionEvent = motionEvent;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         // ⏱️ Uruchamiamy nasłuchiwanie alarmu
         _ = _alarmService.StartAsync(stoppingToken);
+        _ = _lightService.StartAsync(stoppingToken);
 
         var timer = new PeriodicTimer(TimeSpan.FromSeconds(3));
         while (await timer.WaitForNextTickAsync(stoppingToken))
         {
             _motionService.DetectMotion();
+
+            _motionEvent.Reset();
         }
     }
 }
 
-public class LightService
-{
-    public Task StartAsync(CancellationToken cancellationToken)
-    {
-        return Task.Run(() =>
-        {
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                Console.WriteLine($"💡 Light turned on at {DateTime.Now:HH:mm:ss}");
-
-            }
-        }, cancellationToken);
-    }
-}
-
-
-//❗ Problemy:
-// 1. Polling – AlarmService co 100ms pyta, czy coś się wydarzyło → marnuje CPU, nieefektywne
-// 2. Można zgubić ruch, jeśli Reset() zostanie wywołany zanim AlarmService zdąży odczytać flagę.
-// 3. Kod jest nieskalowalny – każde nowe urządzenie dodaje kolejne wątki sprawdzające.
+// Idealne rozwiązanie do scenariuszy typu broadcast (wiele usług nasłuchuje jednego zdarzenia)
