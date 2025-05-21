@@ -4,9 +4,12 @@ using Microsoft.Extensions.Hosting;
 
 Console.WriteLine("Hello, AutoResetEvent!");
 
+var motionEvent = new AutoResetEvent(false);
+
 var host = Host.CreateDefaultBuilder(args)
             .ConfigureServices(services =>
             {
+                services.AddSingleton(motionEvent);
                 services.AddSingleton<MotionDetectionService>();
                 services.AddSingleton<AlarmService>();
                 services.AddHostedService<Worker>();
@@ -18,40 +21,38 @@ await host.RunAsync();
 
 public class MotionDetectionService
 {
-    public bool IsMotionDetected { get; private set; }
+    private readonly AutoResetEvent _motionEvent;
+
+    public MotionDetectionService(AutoResetEvent motionEvent)
+    {
+        _motionEvent = motionEvent;
+    }
 
     public void DetectMotion()
     {
         Console.WriteLine($"🎥 Motion detected at {DateTime.Now:HH:mm:ss}");
-        IsMotionDetected = true;
-    }
-
-    public void Reset()
-    {
-        IsMotionDetected = false;
+        _motionEvent.Set(); // Wysyła sygnał
     }
 }
 
 public class AlarmService
 {
-    private readonly MotionDetectionService _motionService;
+    private readonly AutoResetEvent motionEvent;
 
-    public AlarmService(MotionDetectionService motionService)
+    public AlarmService(AutoResetEvent motionEvent)
     {
-        _motionService = motionService;
+        this.motionEvent = motionEvent;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken cancellationToken) => Task.Factory.StartNew(() => Start(cancellationToken), TaskCreationOptions.LongRunning);
+
+    private void Start(CancellationToken cancellationToken)
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            if (_motionService.IsMotionDetected)
-            {
-                Console.WriteLine($"🚨 Alarm activated at {DateTime.Now:HH:mm:ss}");
-                _motionService.Reset();
-            }
+            motionEvent.WaitOne(); // Czeka na sygnał (np. od detektora ruchu)
 
-            await Task.Delay(100); // 👎 aktywne oczekiwanie (polling)
+            Console.WriteLine($"🚨 Alarm activated at {DateTime.Now:HH:mm:ss}");
         }
     }
 }
@@ -80,10 +81,10 @@ public class Worker : BackgroundService
             _motionService.DetectMotion();
         }
     }
-}
+    }
 
 
-public class LightService
+    public class LightService
 {
     public Task StartAsync(CancellationToken cancellationToken)
     {
