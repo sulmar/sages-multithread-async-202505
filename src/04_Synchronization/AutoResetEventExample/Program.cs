@@ -82,7 +82,25 @@ public class Worker : BackgroundService
     }
 }
 
+
+public class LightService
+{
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        return Task.Run(() =>
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                Console.WriteLine($"💡 Light turned on at {DateTime.Now:HH:mm:ss}");
+
+            }
+        }, cancellationToken);
+    }
+}
+
+
 //❗ Problemy:
 // 1. Polling – AlarmService co 100ms pyta, czy coś się wydarzyło → marnuje CPU, nieefektywne
 // 2. Można zgubić ruch, jeśli Reset() zostanie wywołany zanim AlarmService zdąży odczytać flagę.
 // 3. Kod jest nieskalowalny – każde nowe urządzenie dodaje kolejne wątki sprawdzające.
+
