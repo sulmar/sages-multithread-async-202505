@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Concurrent;
+
 Console.WriteLine("Hello, ConcurrentDictionary!");
 
 
@@ -13,7 +15,6 @@ if (tracker.TryGetDeviceStatus("351111111111111", out var status))
 {
     Console.WriteLine($"Znaleziono: {status}");
 }
-
 
 public class DeviceStatus
 {
@@ -35,7 +36,7 @@ public class DeviceStatus
 
 public class DeviceTracker
 {
-    private readonly Dictionary<string, DeviceStatus> _devicesByImei = new(); // ❌ niebezpieczny słownik
+    private readonly ConcurrentDictionary<string, DeviceStatus> _devicesByImei = new(); // ❌ niebezpieczny słownik
 
     public bool TryGetDeviceStatus(string imei, out DeviceStatus status)
     {
@@ -52,8 +53,8 @@ public class DeviceTracker
         }
         else
         {
-            _devicesByImei.Add(imei, status);
-            // _devicesByImei.AddOrUpdate(imei, status, (_, existing) => status.MergeWith(existing)); // funkcja aktualizacji
+            _devicesByImei.AddOrUpdate(imei, status, 
+                ( key, existing) => status.MergeWith(existing)); // funkcja aktualizacji
 
         }
 
