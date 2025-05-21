@@ -7,7 +7,7 @@ var vehicleCount = 10;
 var tasks = Enumerable.Range(1, vehicleCount)
     .Select(id => Task.Run(async () =>
     {
-        await Task.Delay(Random.Shared.Next(1000, 1500)); // losowe opóźnienie przyjazdu - 👉 sprawdż co się stanie przy mniejszych czasach!
+        await Task.Delay(Random.Shared.Next(100, 500)); // losowe opóźnienie przyjazdu - 👉 sprawdż co się stanie przy mniejszych czasach!
         await gate.TryEnterAsync(id);
     }))
     .ToArray();
@@ -27,9 +27,9 @@ public class ParkingGate
 
     public async Task TryEnterAsync(int vehicleId)
     {
-        await Task.Yield();
+        await Task.Yield(); // Symulacja parkowania pojazdu
 
-        if (_remainingSpots > 0)
+        if (_remainingSpots > 0) 
         {
             _remainingSpots--;
             Console.WriteLine($"🚗 Pojazd #{vehicleId} wpuszczony.");
