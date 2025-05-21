@@ -11,13 +11,18 @@ Console.CancelKeyPress += (sender, e) =>
     cts.Cancel();
 };
 
+
+// 
+// System.Threading.Timer timer1 = new Timer( _ => Console.WriteLine("[System.Threading.Timer] Heartbeat"), null, 0, 2000);
+
+var timer = new PeriodicTimer(TimeSpan.FromSeconds(2)); // ⏱ generuje tick co 2 sekundy
+
 try
 {
-    while (!cts.IsCancellationRequested)
+    while (await timer.WaitForNextTickAsync(cts.Token))  // ⏱ czeka 2 sekundy
     {
         Console.WriteLine($"Heartbeat: {DateTime.Now}");
         await DoSomethingAsync(); // 🕒 zajmuje 1 sekundę
-        await Task.Delay(TimeSpan.FromSeconds(1), cts.Token); // ⏱ czeka 1 sekundy
     }
 }
 catch (OperationCanceledException)
