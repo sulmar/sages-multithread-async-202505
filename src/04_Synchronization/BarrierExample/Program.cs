@@ -12,7 +12,7 @@ Console.WriteLine("🚗 Startujemy analizę...");
 
 
 var gateService = new GateAccessService();
-await gateService.RunTaskAsync();
+await gateService.RunAsync();
 
 Console.WriteLine("🏁 Operacja zakończona.");
 
@@ -31,7 +31,7 @@ public class GateAccessService
 
     public async Task RunAsync()
     {
-        var camera = new CameraService(_barrier);
+        var camera = new CameraServiceAdapter(_barrier);
         var rfid = new RfidService(_barrier);
         var sensor = new VehicleSensorService(_barrier);
 
@@ -45,39 +45,15 @@ public class GateAccessService
         await Task.WhenAll(tasks);
     }
 
-    public async Task RunTaskAsync()
-    {
-        var camera = new CameraService(_barrier);
-        var rfid = new RfidService(_barrier);
-        var sensor = new VehicleSensorService(_barrier);
-
-        var initTasks = new[]
-        {
-            camera.InitAsync(),
-            rfid.InitAsync(),
-            sensor.InitAsync()
-        };
-
-        await Task.WhenAll(initTasks);
-
-        var processTasks = new[]
-        {
-            camera.ProcessAsync(),
-            rfid.ProcessAsync(),
-            sensor.ProcessAsync()
-        };
-
-        await Task.WhenAll(processTasks);
-
-    }
+   
 }
 
-
-public class CameraService
+// Wzorzec projektowy Adapter (wariant klasowy)
+public class CameraServiceAdapter : CameraService
 {
     private readonly Barrier _barrier;
 
-    public CameraService(Barrier barrier)
+    public CameraServiceAdapter(Barrier barrier)
     {
         this._barrier = barrier;
     }
@@ -91,15 +67,18 @@ public class CameraService
         // Faza 2 – może się wykonać zbyt wcześnie
         await ProcessAsync();
     }
+}
 
-    public async Task InitAsync()
+public class CameraService
+{
+    protected async Task InitAsync()
     {
         Console.WriteLine("📸 [Kamera] Faza 1: Analiza...");
         await Task.Delay(1000 + Random.Shared.Next(1000));
         Console.WriteLine("📸 [Kamera] Faza 1: Rozpoznano tablicę.");
     }
 
-    public async Task ProcessAsync()
+    protected async Task ProcessAsync()
     {
         Console.WriteLine("📸 [Kamera] Faza 2: Weryfikacja dostępu...");
         await Task.Delay(500);
