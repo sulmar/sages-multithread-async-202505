@@ -13,11 +13,11 @@ Console.CancelKeyPress += (sender, e) =>
 
 try
 {
-    while (true)
+    while (!cts.IsCancellationRequested)
     {
-        Console.WriteLine($"Delayed: {DateTime.Now}");
+        Console.WriteLine($"Heartbeat: {DateTime.Now}");
         await DoSomethingAsync(); // 🕒 zajmuje 1 sekundę
-        await Task.Delay(TimeSpan.FromSeconds(2), cts.Token); // ⏱ czeka 2 sekundy
+        await Task.Delay(TimeSpan.FromSeconds(1), cts.Token); // ⏱ czeka 1 sekundy
     }
 }
 catch (OperationCanceledException)
@@ -30,5 +30,5 @@ catch (OperationCanceledException)
 async Task DoSomethingAsync()
 {
     Console.WriteLine("Do something...");
-    await Task.Delay(TimeSpan.FromSeconds(1));
+    await Task.Delay(Random.Shared.Next(1000, 3000));
 }
