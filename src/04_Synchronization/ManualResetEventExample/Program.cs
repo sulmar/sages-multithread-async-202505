@@ -8,7 +8,11 @@ Console.WriteLine("Hello, ManualResetEvent!");
 
 HubEvents hub = new HubEvents();
 
+hub.del.Invoke(5);
+
 hub.SendSignal(100);
+
+Console.ReadLine();
 
 
 return;

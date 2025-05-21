@@ -1,22 +1,49 @@
 ﻿namespace ManualResetEventExample;
 
+
+abstract class Event
+{
+
+}
+
+internal class EventAggrerator
+{
+    Action<Event> del;
+
+    public void Subscribe(Action<Event> del)
+    {
+        this.del += del;
+    }
+
+    public void SendEvent(Event value)
+    {
+        del.Invoke(value);
+    }
+
+
+}
+
+
 internal class HubEvents
 {
-    delegate void WorkDelegate(int arg);
-    WorkDelegate del;
-
+    public delegate Task WorkDelegate(int arg);
+    public WorkDelegate del;
 
     public HubEvents()
     {
-        del += DoWork1;
-        del += DoWork2;
-        del += DoWork3;
+        del += DoWork1Async;
+        del += DoWork2Async;
+        del += DoWork3Async;
     }
 
     public void SendSignal(int value)
     {
         del.Invoke(value);
     }
+
+    private Task DoWork1Async(int arg) => Task.Run(() => DoWork1(arg));
+    private Task DoWork2Async(int arg) => Task.Run(() => DoWork2(arg));
+    private Task DoWork3Async(int arg) => Task.Run(() => DoWork3(arg));
 
     private void DoWork1(int arg)
     {
