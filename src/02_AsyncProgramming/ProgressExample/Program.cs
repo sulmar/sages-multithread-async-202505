@@ -4,11 +4,17 @@ using System;
 
 Console.WriteLine("Hello, Progress!");
 
-
 // Automatyczne anulowanie zadania po określonym czasie 
 CancellationTokenSource cts = new CancellationTokenSource();
 
-CancellationToken cancellationToken = cts.Token;
+Console.WriteLine("Press Ctrl+C for cancel");
+Console.CancelKeyPress += (sender, e) =>
+{
+    Console.WriteLine("Stopping...");
+    e.Cancel = true;
+    cts.Cancel();
+};
+
 
 Printer printer = new Printer();
 
@@ -17,10 +23,7 @@ IProgress<int> consoleProgress = new Progress<int>(step => Console.WriteLine($".
 IProgress<int> colorConsoleProgress = new ColorConsoleProgress();
 
 
-Task task = printer.PrintAsync("Document #1", cancellationToken, colorConsoleProgress);
-
-// Anulowanie zadania po określonym czasie po wywołaniu Cancel
-// cts.CancelAfter(3500);
+Task task = printer.PrintAsync("Document #1", cts.Token, colorConsoleProgress);
 
 try
 {
@@ -28,7 +31,7 @@ try
 }
 catch (OperationCanceledException e)
 {
-    Console.WriteLine("Printing Cancelled.");
+    Console.WriteLine("Printing was canceled.");
 }
 
 Console.ReadLine();
@@ -44,18 +47,9 @@ class Printer
 
         for (int i = 0; i < 5; i++)
         {
-            Console.WriteLine($"cancellationToken.IsCancellationRequested: {cancellationToken.IsCancellationRequested}");
-            if (cancellationToken.IsCancellationRequested)
-            {
-                throw new OperationCanceledException();
-            }
-
-            // cancellationToken.ThrowIfCancellationRequested();
-
-            // Console.WriteLine($"...printing chunk {i + 1}"); // Drukowanie fragmentu strony
+            cancellationToken.ThrowIfCancellationRequested();
 
             progress?.Report(i);
-
 
             await Task.Delay(1000, cancellationToken);
 
