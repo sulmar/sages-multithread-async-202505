@@ -19,6 +19,8 @@ public class ParkingGate
 {
     private int _remainingSpots;
 
+    private readonly object _lock = new object();
+
     public ParkingGate(int maxVehicles)
     {
         _remainingSpots = maxVehicles;
@@ -29,15 +31,24 @@ public class ParkingGate
     {
         await Task.Yield(); // Symulacja parkowania pojazdu
 
-        if (_remainingSpots > 0) 
+        lock (_lock)
         {
-            _remainingSpots--;
-            Console.WriteLine($"🚗 Pojazd #{vehicleId} wpuszczony.");
 
+            if (_remainingSpots > 0)
+            {
+                _remainingSpots--;
+                Console.WriteLine($"🚗 Pojazd #{vehicleId} wpuszczony.");
+
+                if (DateTime.Now.Second % 2 == 0)
+                    throw new ApplicationException();
+
+            }
+            else
+            {
+                Console.WriteLine($"❌ Pojazd #{vehicleId} odrzucony — brak miejsc.");
+            }
         }
-        else
-        {
-            Console.WriteLine($"❌ Pojazd #{vehicleId} odrzucony — brak miejsc.");
-        }
+
+       // await Task.CompletedTask;
     }
 }
