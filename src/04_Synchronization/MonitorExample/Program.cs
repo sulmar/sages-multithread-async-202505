@@ -31,10 +31,13 @@ public class ParkingGate
     {
         await Task.Yield();
 
+
+        bool lockTacken = false;
+
         try
 
         {
-            Monitor.Enter(_lock);
+            Monitor.Enter(_lock, ref lockTacken);
 
             if (_remainingSpots > 0)
             {
@@ -52,9 +55,13 @@ public class ParkingGate
         }
         finally
         {
-            Monitor.Exit(_lock);
+            if (lockTacken)
+            {
+                Monitor.Exit(_lock);
+            }
+            
         }
 
-        
+
     }
 }
