@@ -12,6 +12,7 @@ var host = Host.CreateDefaultBuilder(args)
                 services.AddSingleton(motionEvent);
                 services.AddSingleton<MotionDetectionService>();
                 services.AddSingleton<AlarmService>();
+                services.AddSingleton<LightService>();
                 services.AddHostedService<Worker>();
             })
             .Build();
@@ -58,22 +59,49 @@ public class AlarmService
 }
 
 
+public class LightService
+{
+    private readonly AutoResetEvent _motionEvent;
+
+    public LightService(AutoResetEvent motionEvent)
+    {
+        _motionEvent = motionEvent;
+    }
+
+    public Task StartAsync(CancellationToken cancellationToken) => Task.Factory.StartNew(() => Start(cancellationToken), TaskCreationOptions.LongRunning);
+
+    public void Start(CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            _motionEvent.WaitOne(); // Czeka na sygnał (np. od detektora ruchu)
+
+            Console.WriteLine($"💡 Light turned on at {DateTime.Now:HH:mm:ss}");
+        }
+    }
+}
+
+
+
 
 public class Worker : BackgroundService
 {
     private readonly MotionDetectionService _motionService;
     private readonly AlarmService _alarmService;
+    private readonly LightService _lightService;
 
-    public Worker(MotionDetectionService motionService, AlarmService alarmService)
+    public Worker(MotionDetectionService motionService, AlarmService alarmService, LightService lightService)
     {
         _motionService = motionService;
         _alarmService = alarmService;
+        _lightService = lightService;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         // ⏱️ Uruchamiamy nasłuchiwanie alarmu
         _ = _alarmService.StartAsync(stoppingToken);
+        _ = _lightService.StartAsync(stoppingToken);
 
         var timer = new PeriodicTimer(TimeSpan.FromSeconds(3));
         while (await timer.WaitForNextTickAsync(stoppingToken))
@@ -81,23 +109,8 @@ public class Worker : BackgroundService
             _motionService.DetectMotion();
         }
     }
-    }
-
-
-    public class LightService
-{
-    public Task StartAsync(CancellationToken cancellationToken)
-    {
-        return Task.Run(() =>
-        {
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                Console.WriteLine($"💡 Light turned on at {DateTime.Now:HH:mm:ss}");
-
-            }
-        }, cancellationToken);
-    }
 }
+
 
 
 //❗ Problemy:
