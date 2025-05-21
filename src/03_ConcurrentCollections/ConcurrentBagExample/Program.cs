@@ -41,7 +41,7 @@ public class DeviceRegistry
         // 👇 Wymuszamy kolizję wątków
         Thread.Sleep(Random.Shared.Next(1, 5));
 
-        _activeDevices.Add(device); 
+        _activeDevices.Add(device); // ❌ potencjalnie niebezpieczne
 
         Console.WriteLine($"Dodano: {device.Name}");
     }
