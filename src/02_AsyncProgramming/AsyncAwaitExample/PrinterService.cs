@@ -8,18 +8,10 @@ namespace AsyncAwaitExample;
 
 internal class PrinterService
 {
-    private readonly Printer printer;
-
-    public PrinterService(Printer printer)
-    {
-        this.printer = printer;
-    }
-
     public async Task PrintAndCalculateAsync()
     {
         CostCalculator calculator = new CostCalculator();
-
-        // var printer = lazyPrinter.Value;
+        var printer = new Printer();
 
         // Asynchroniczny z async-await
         await printer.PrintAsync("Document #1");

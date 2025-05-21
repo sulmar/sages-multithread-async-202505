@@ -1,15 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using AsyncAwaitExample;
-using Microsoft.Extensions.DependencyInjection;
 
 Console.WriteLine("Hello, Tasks!");
-
-async Task<Printer> CreateAsync()
-{
-    var printer = new Printer();
-    await printer.InitAsync();
-    return printer;
-}
 
 Printer printer = new Printer();
 CostCalculator calculator = new CostCalculator();
@@ -24,20 +16,15 @@ printer.PrintAsync("Document #1")
     .ContinueWith(taskPrint => calculator.CalculateAsync("Document #1")
         .ContinueWith(calculateTask => Console.WriteLine($"Cost: {calculateTask.Result:C2}")));
 
+PrinterService printerService = new PrinterService();
 
-// Microsoft.Extensions.DependencyInjection 
-var serviceProvider = new ServiceCollection()
-          .AddSingleton<PrinterService>()
-          .AddSingleton<Printer>(await CreateAsync())
-          .BuildServiceProvider();
+Task print1Task = printerService.PrintAndCalculateAsync();
 
+Task print2Task = printerService.PrintAndCalculateAsync();
 
-PrinterService printerService = serviceProvider.GetService<PrinterService>();
+await Task.WhenAll(print1Task, print2Task);
 
-
-// PrinterService printerService = new PrinterService();
-
-await printerService.PrintAndCalculateAsync();
+// await Task.WhenAny(print1Task, print2Task);
 
 
 Console.WriteLine("Finished.");
@@ -70,7 +57,6 @@ public class Printer
         return Task.Run(() => Print(content));
     }
 }
-
 
 public class CostCalculator
 {
