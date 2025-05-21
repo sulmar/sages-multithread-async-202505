@@ -1,4 +1,6 @@
 ﻿
+using LockExample;
+
 Console.WriteLine("Hello, Lock!");
 
 var gate = new ParkingGate(maxVehicles: 3);
@@ -38,6 +40,8 @@ public class ParkingGate
             {
                 _remainingSpots--;
                 Console.WriteLine($"🚗 Pojazd #{vehicleId} wpuszczony.");
+
+                Logger.Instance.Log($"🚗 Pojazd #{vehicleId} wpuszczony.");
 
                 if (DateTime.Now.Second % 2 == 0)
                     throw new ApplicationException();
