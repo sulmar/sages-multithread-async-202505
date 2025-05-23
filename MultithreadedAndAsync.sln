@@ -111,6 +111,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemaphoreSlimExample", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallelForAsyncExample", "src\06_ParallelProcessing\ParallelForAsyncExample\ParallelForAsyncExample.csproj", "{341F389D-D027-4703-8115-6404B9BCC897}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallelForEachAsync", "src\06_ParallelProcessing\ParallelForEachAsync\ParallelForEachAsync.csproj", "{A73EF96D-5E98-4202-8BFE-86357D1BEB7D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -637,6 +639,18 @@ Global
 		{341F389D-D027-4703-8115-6404B9BCC897}.Release|x64.Build.0 = Release|Any CPU
 		{341F389D-D027-4703-8115-6404B9BCC897}.Release|x86.ActiveCfg = Release|Any CPU
 		{341F389D-D027-4703-8115-6404B9BCC897}.Release|x86.Build.0 = Release|Any CPU
+		{A73EF96D-5E98-4202-8BFE-86357D1BEB7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A73EF96D-5E98-4202-8BFE-86357D1BEB7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A73EF96D-5E98-4202-8BFE-86357D1BEB7D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A73EF96D-5E98-4202-8BFE-86357D1BEB7D}.Debug|x64.Build.0 = Debug|Any CPU
+		{A73EF96D-5E98-4202-8BFE-86357D1BEB7D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A73EF96D-5E98-4202-8BFE-86357D1BEB7D}.Debug|x86.Build.0 = Debug|Any CPU
+		{A73EF96D-5E98-4202-8BFE-86357D1BEB7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A73EF96D-5E98-4202-8BFE-86357D1BEB7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A73EF96D-5E98-4202-8BFE-86357D1BEB7D}.Release|x64.ActiveCfg = Release|Any CPU
+		{A73EF96D-5E98-4202-8BFE-86357D1BEB7D}.Release|x64.Build.0 = Release|Any CPU
+		{A73EF96D-5E98-4202-8BFE-86357D1BEB7D}.Release|x86.ActiveCfg = Release|Any CPU
+		{A73EF96D-5E98-4202-8BFE-86357D1BEB7D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -695,6 +709,7 @@ Global
 		{3FEFCA64-4F74-45BB-899F-ADCF8FCBD24B} = {37C4E826-A03A-E182-5C88-B2E6CB82960B}
 		{A25F2E0D-625C-40CA-B4D2-78E25D377CFB} = {37C4E826-A03A-E182-5C88-B2E6CB82960B}
 		{341F389D-D027-4703-8115-6404B9BCC897} = {59375C94-34A6-D073-8B02-7BB256F77BD5}
+		{A73EF96D-5E98-4202-8BFE-86357D1BEB7D} = {59375C94-34A6-D073-8B02-7BB256F77BD5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5A5C894-3C5D-47CB-88A3-58CA8486A75D}
