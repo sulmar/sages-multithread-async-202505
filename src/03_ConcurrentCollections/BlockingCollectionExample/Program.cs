@@ -6,9 +6,12 @@ using System.Collections.Concurrent;
 
 Console.WriteLine("Hello, BlockingCollection!");
 
-foreach(var weekday in Helper.GetWeekdays())
+foreach(var weekday in Helper.Infinity())
 {
     Console.WriteLine(weekday);
+
+    //if (weekday == "Pt")
+    //    return;
 }
 
 var invoice = new Invoice

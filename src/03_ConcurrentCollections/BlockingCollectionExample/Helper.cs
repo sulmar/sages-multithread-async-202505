@@ -4,18 +4,26 @@
 // Pobierz dni tygodnia
 internal class Helper
 {
-    public static IEnumerable<string> GetWeekdays()
-    {
-        var weekdays = new List<string>(); // zachłanna kolekcja (eager)
-        weekdays.Add("Pn");
-        weekdays.Add("Wt");
-        weekdays.Add("Sr");
-        weekdays.Add("Cz");
-        weekdays.Add("Pt");
-        weekdays.Add("Sb");
-        weekdays.Add("Nd");
+    public static IEnumerable<string> GetWeekdays()  
+    {        
+        // Leniwa kolekcja (Lazy Collection)
+        yield return "Pn";
+        yield return "Wt";
+        yield return "Sr";
+        yield return "Cz";
+        yield return "Pt";
+        yield return "Sb";
+        yield return "Nd";
+    }
 
-        return weekdays;
+    public static IEnumerable<string> Infinity()
+    {
+        // Leniwa kolekcja (Lazy Collection)
+        while (true)
+        {
+            Thread.Sleep(1000);
+            yield return "Sb";
+        }
 
     }
 }
