@@ -9,7 +9,7 @@ MeasureForExecutionTime(items);
 
 void MeasureForExecutionTime(int items)
 {
-    Console.WriteLine("Start Executing...");
+    Console.WriteLine("Wykonanie sekwencyjne......");
 
     var stopwatch = Stopwatch.StartNew();
 
@@ -21,12 +21,13 @@ void MeasureForExecutionTime(int items)
     stopwatch.Stop();
 
 
-    Console.WriteLine($"Time elapsed: {stopwatch.ElapsedMilliseconds} ms");
+    Console.WriteLine($"Czas wykonania (sekwencyjnie): {stopwatch.ElapsedMilliseconds} ms");
 }
 
 // Symulacja operacji CPU-bound czasochłonnej
-static void DoWork(int i)
+static void DoWork(int item)
 {
+    Console.WriteLine($"Przetwarzanie {item} na wątku {Thread.CurrentThread.ManagedThreadId}");
     Thread.SpinWait(1_000_000); // Obciążenie CPU
     Thread.Sleep(100); // Symulacja opoźnienia
 }
