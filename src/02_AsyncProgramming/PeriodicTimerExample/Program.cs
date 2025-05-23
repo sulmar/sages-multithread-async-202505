@@ -13,12 +13,15 @@ Console.CancelKeyPress += (sender, e) =>
 
 
 
+// Callback
 System.Threading.Timer timer1 = new Timer( _ => Console.WriteLine("[System.Threading.Timer] Heartbeat"), null, 0, 2000);
+
+// Event
 System.Timers.Timer timer2 = new System.Timers.Timer(TimeSpan.FromSeconds(2));
 timer2.Elapsed += (sender, e) => Console.WriteLine("[System.Timers.Timer ] Heartbeat");
 timer2.Start();
 
-
+// Task
 var timer = new PeriodicTimer(TimeSpan.FromSeconds(2)); // ⏱ generuje tick co 2 sekundy
 
 try
