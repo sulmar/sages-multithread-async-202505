@@ -5,8 +5,6 @@ Console.WriteLine("Hello, BlockingCollection!");
 
 InvoiceProcessor processor = new InvoiceProcessor();
 
-Task.Run(() => processor.Process());
-
 // Symulacja generowania faktur do zaksięgowania
 for (int i = 0; i < 10; i++)
 {
@@ -17,6 +15,11 @@ for (int i = 0; i < 10; i++)
     Thread.Sleep(2000);
 }
 
+Task.Run(() => processor.Process());
+
+
+Console.ReadLine();
+
 
 class InvoiceProcessor
 {
@@ -24,6 +27,8 @@ class InvoiceProcessor
 
     public void Process()
     {
+        Console.WriteLine(invoices.Count);
+
         foreach (var invoice in invoices)
         {
             Console.WriteLine($"{invoice} is accounting...");
