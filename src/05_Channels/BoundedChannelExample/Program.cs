@@ -5,8 +5,14 @@ using System.Threading.Channels;
 
 Console.WriteLine("Hello, Channel.CreateBounded!");
 
+var options = new BoundedChannelOptions(2)
+{
+        FullMode = BoundedChannelFullMode.DropWrite , // TODO: Pytanie: czy producent moze otrzymac informację, że jego dokument został porzucony?    
+    };
+
+
 // Tworzymy kanał z ograniczoną pojemnością
-var channel = Channel.CreateBounded<int>(2);
+var channel = Channel.CreateBounded<int>(options);
 
 // Uruchamiamy producenta
 var productTask = ProducerAsync(channel);
