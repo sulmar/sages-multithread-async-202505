@@ -4,56 +4,60 @@ using System.Collections.Concurrent;
 Console.WriteLine("Hello, BlockingCollection!");
 
 
-var ocrService = new OcrService();
-var cts = new CancellationTokenSource();
 
-// 🔁 Konsument (OCR worker)
+// await DocumentOcrTest();
 
-var processor = Task.Run(() =>
+static async Task DocumentOcrTest()
 {
+    var ocrService = new OcrService();
+    var cts = new CancellationTokenSource();
+
     // 🔁 Konsument (OCR worker)
-    
-    Console.WriteLine("Konsument (OCR worker) nasłuchuje...");
 
-    foreach (var doc in ocrService.GetJobs(cts.Token))
+    var processor = Task.Run(() =>
     {
-        Console.WriteLine($"Przetwarzanie: {doc}");
-        Thread.Sleep(200); // symulacja OCR
-        Console.WriteLine($"Zakończono: {doc.FileName}");
-    }
-}, cts.Token);
+        // 🔁 Konsument (OCR worker)
 
-await Task.Delay(TimeSpan.FromSeconds(10));
+        Console.WriteLine("Konsument (OCR worker) nasłuchuje...");
 
-// 🔁 Producent (Symulacja źródła dokumentów)
-var producer = Task.Run(() =>
-{
-    Console.WriteLine("Producent (OCR scanner) s...");
-
-    var files = new[] { "invoice.pdf", "contract.pdf", "report.pdf" };
-
-    for (int i = 0; i < 20; i++)
-    {
-        var doc = new OcrDocument
+        foreach (var doc in ocrService.GetJobs(cts.Token))
         {
-            FileName = files[i % files.Length],
-            SubmittedAt = DateTime.Now
-        };
+            Console.WriteLine($"Przetwarzanie: {doc}");
+            Thread.Sleep(200); // symulacja OCR
+            Console.WriteLine($"Zakończono: {doc.FileName}");
+        }
+    }, cts.Token);
 
-        ocrService.Submit(doc);
-        Thread.Sleep(Random.Shared.Next(50, 150));
-    }
+    await Task.Delay(TimeSpan.FromSeconds(10));
 
-    ocrService.Complete(); // sygnał końca pracy
-});
+    // 🔁 Producent (Symulacja źródła dokumentów)
+    var producer = Task.Run(() =>
+    {
+        Console.WriteLine("Producent (OCR scanner) s...");
+
+        var files = new[] { "invoice.pdf", "contract.pdf", "report.pdf" };
+
+        for (int i = 0; i < 20; i++)
+        {
+            var doc = new OcrDocument
+            {
+                FileName = files[i % files.Length],
+                SubmittedAt = DateTime.Now
+            };
+
+            ocrService.Submit(doc);
+            Thread.Sleep(Random.Shared.Next(50, 150));
+        }
+
+        ocrService.Complete(); // sygnał końca pracy
+    });
 
 
-// Poczekaj na zakończenie
-Task.WaitAll(producer, processor);
+    // Poczekaj na zakończenie
+    Task.WaitAll(producer, processor);
 
-Console.WriteLine("Wszystkie dokumenty przetworzone.");
-
-
+    Console.WriteLine("Wszystkie dokumenty przetworzone.");
+}
 
 public class OcrDocument
 {
