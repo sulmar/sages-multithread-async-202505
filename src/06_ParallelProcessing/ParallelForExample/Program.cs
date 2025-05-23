@@ -14,12 +14,23 @@ Console.ReadKey();
 async Task MeasureForExecutionTimeTask(int count)
 {
     Console.WriteLine("Wykonanie asynchroniczne...");
-    
+
+    // dławik / przepustnica
+    SemaphoreSlim? throtler = new SemaphoreSlim(2);
+
     var stopwatch = Stopwatch.StartNew();
 
     var items = Enumerable.Range(0, count);
 
-    var tasks = items.Select(i => DoWorkAsync(i));
+    var tasks = items.Select(async i =>
+    {
+        await throtler.WaitAsync();
+
+        await DoWorkAsync(i);
+
+        throtler.Release();
+
+    });
     await Task.WhenAll(tasks);
 
     stopwatch.Stop();
