@@ -9,7 +9,7 @@ MeasureForExecutionTime(items);
 
 void MeasureForExecutionTime(int items)
 {
-    Console.WriteLine("Wykonanie sekwencyjne......");
+    Console.WriteLine("Wykonanie sekwencyjne...");
 
     var stopwatch = Stopwatch.StartNew();
 
