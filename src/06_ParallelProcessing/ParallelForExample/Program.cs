@@ -8,23 +8,28 @@ Console.WriteLine($"CPU: {Environment.ProcessorCount} rdzeni");
 
 const int count = 20;
 
-MeasureForExecutionTimeSync(count);
-MeasureForExecutionTimeTask(count);
+//MeasureForExecutionTimeSync(count);
+//MeasureForExecutionTimeTask(count);
 MeasureForExecutionTimeParallel(count);
 
 void MeasureForExecutionTimeParallel(int count)
 {
+    CancellationTokenSource cts = new CancellationTokenSource(1000);
+
     var items = Enumerable.Range(0, count);
 
     var options = new ParallelOptions
     { 
-        MaxDegreeOfParallelism = 4 // Przepustnica
+        MaxDegreeOfParallelism = 4, // Przepustnica
+        CancellationToken = cts.Token,        
     };
 
+    IProgress<string> progress = new Progress<string>(message => Console.WriteLine(message));
 
     var stopwatch = Stopwatch.StartNew();
-
-    Parallel.For(0, count, options, i => DoWork(i));
+    
+    // równoległa pętla for(int i = 0; i < count) { DoWork(i); } 
+    Parallel.For(0, count, options, i => DoWork(i, progress));
 
     stopwatch.Stop();
 
@@ -91,10 +96,10 @@ static async Task DoWorkAsync(int item)
     Console.WriteLine($"Zakonczono {item} na wątku {Thread.CurrentThread.ManagedThreadId}");
 }
 // Symulacja operacji CPU-bound czasochłonnej
-static void DoWork(int item)
+static void DoWork(int item, IProgress<string> progress = null)
 {
-    Console.WriteLine($"Przetwarzanie {item} na wątku {Thread.CurrentThread.ManagedThreadId}");
+    progress?.Report($"Przetwarzanie {item} na wątku {Thread.CurrentThread.ManagedThreadId}");
     Thread.SpinWait(1_000_000); // Obciążenie CPU
     Thread.Sleep(100); // Symulacja opoźnienia
-    Console.WriteLine($"Zakonczono {item} na wątku {Thread.CurrentThread.ManagedThreadId}");
+    progress?.Report($"Zakonczono {item} na wątku {Thread.CurrentThread.ManagedThreadId}");
 }
