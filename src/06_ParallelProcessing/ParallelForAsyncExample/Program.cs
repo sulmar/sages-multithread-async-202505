@@ -1,7 +1,16 @@
 ﻿
 Console.WriteLine("Hello, Parallel.ForAsync!");
 
-await RunWithAsync();
+// await RunWithAsync();
+
+var options = new ParallelOptions
+{
+    MaxDegreeOfParallelism = 4 // Tylko 4 zadania na raz
+};
+
+
+await Parallel.ForAsync(0, 20, options, async (i, cancellationToken) => await DoWorkAsync(i));
+
 
 
 static async Task RunWithAsync()
@@ -24,6 +33,6 @@ static async Task RunWithAsync()
 static async Task DoWorkAsync(int id)
 {
     Console.WriteLine($"🔧 Start {id} na wątku {Thread.CurrentThread.ManagedThreadId}");
-    await Task.Delay(300);
+    await Task.Delay(300); // I/O
     Console.WriteLine($"✅ Koniec {id} na wątku {Thread.CurrentThread.ManagedThreadId}");
 }
