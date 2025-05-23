@@ -6,8 +6,24 @@ Console.WriteLine("Hello, Parallel.For!");
 
 const int count = 20;
 
-MeasureForExecutionTime(count);
+MeasureForExecutionTimeSync(count);
 MeasureForExecutionTimeTask(count);
+MeasureForExecutionTimeParallel(count);
+
+void MeasureForExecutionTimeParallel(int count)
+{
+    var items = Enumerable.Range(0, count);
+
+    var stopwatch = Stopwatch.StartNew();
+
+    Parallel.For(0, count, i => DoWork(i));
+
+    stopwatch.Stop();
+
+
+    Console.WriteLine($"Czas wykonania (Parallel): {stopwatch.ElapsedMilliseconds} ms");
+
+}
 
 Console.ReadKey();
 
@@ -16,7 +32,7 @@ async Task MeasureForExecutionTimeTask(int count)
     Console.WriteLine("Wykonanie asynchroniczne...");
 
     // dławik / przepustnica
-    SemaphoreSlim? throtler = new SemaphoreSlim(2);
+ //   SemaphoreSlim? throtler = new SemaphoreSlim(2);
 
     var stopwatch = Stopwatch.StartNew();
 
@@ -24,11 +40,11 @@ async Task MeasureForExecutionTimeTask(int count)
 
     var tasks = items.Select(async i =>
     {
-        await throtler.WaitAsync();
+      //  await throtler.WaitAsync();
 
         await DoWorkAsync(i);
 
-        throtler.Release();
+//        throtler.Release();
 
     });
     await Task.WhenAll(tasks);
@@ -41,7 +57,7 @@ async Task MeasureForExecutionTimeTask(int count)
 
 
 
-void MeasureForExecutionTime(int count)
+void MeasureForExecutionTimeSync(int count)
 {
     Console.WriteLine("Wykonanie sekwencyjne...");
 
