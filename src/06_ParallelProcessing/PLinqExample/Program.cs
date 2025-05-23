@@ -4,12 +4,16 @@ using System.Diagnostics;
 Console.WriteLine("Hello, Linq!");
 
 
-var numbers = Enumerable.Range(1, 10_000);
+var numbers = Enumerable.Range(1, 100_000);
 
 Stopwatch stopwatch = Stopwatch.StartNew();
 
 var primes = numbers
+    .AsParallel()
+    .WithDegreeOfParallelism(Environment.ProcessorCount / 2)
+    .WithExecutionMode(ParallelExecutionMode.ForceParallelism)
     .Where(IsPrime)
+    .AsSequential()
     .ToList();
 
 stopwatch.Stop();
