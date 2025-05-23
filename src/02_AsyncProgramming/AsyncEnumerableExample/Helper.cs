@@ -15,12 +15,12 @@ internal class Helper
         yield return "Nd";
     }
 
-    public static async IAsyncEnumerable<double> Infinity()
+    public static async IAsyncEnumerable<double> Infinity(CancellationToken cancellationToken = default)
     {
         // Leniwa kolekcja (Lazy Collection)
-        while (true)
+        while (!cancellationToken.IsCancellationRequested)
         {
-            await Task.Delay(1000); // symulacja I/O np. odczyt temperatury
+            await Task.Delay(1000, cancellationToken); // symulacja I/O np. odczyt temperatury
 
             yield return Random.Shared.NextDouble() * 100;
         }

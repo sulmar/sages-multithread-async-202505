@@ -3,10 +3,18 @@ using AsyncEnumerableExample;
 
 Console.WriteLine("Hello, AsyncEnumerable!");
 
+CancellationTokenSource cts = new CancellationTokenSource(3000);
 
-await foreach (var weekday in Helper.Infinity())
+try
 {
-    Console.WriteLine(weekday);
+    await foreach (var weekday in Helper.Infinity(cts.Token))
+    {
+        Console.WriteLine(weekday);
+    }
+}
+catch(TaskCanceledException)
+{
+    Console.WriteLine("Canceled.");
 }
 
 
