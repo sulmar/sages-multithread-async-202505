@@ -1,9 +1,15 @@
 ﻿
+using BlockingCollectionExample;
 using Microsoft.VisualBasic;
 using System.Collections;
 using System.Collections.Concurrent;
 
 Console.WriteLine("Hello, BlockingCollection!");
+
+foreach(var weekday in Helper.GetWeekdays())
+{
+    Console.WriteLine(weekday);
+}
 
 var invoice = new Invoice
 {
@@ -25,6 +31,9 @@ foreach (var detail in invoice)
 }
 
 return;
+
+
+
 
 
 InvoiceProcessor processor = new InvoiceProcessor();
