@@ -20,4 +20,9 @@ cd folder
 dotnet build
 ```
 
-Miłej nauki ;-)
+## Mapa drogowa
+
+![roadmap](https://github.com/user-attachments/assets/1f858246-33c8-4527-b685-ec6f64d064d4)
+
+
+🎓 Miłej nauki 😀
