@@ -13,6 +13,9 @@ var invoice = new Invoice
     { 
         new Detail("a", 1, 2.99),
         new Detail("b", 2, 1.99),
+        new Detail("c", 3, 1.99),
+        new Detail("d", 4, 1.99),
+        new Detail("e", 4, 1.99),
     }
 };
 
@@ -134,7 +137,10 @@ record Invoice : IEnumerable<Detail>
     public IEnumerator<Detail> GetEnumerator()
     {
         yield return Details[0];
-        yield return Details[1];        
+        yield return Details[1];
+        yield return Details[2];
+        yield return Details[3];
+        yield return Details[4];
     }
 
     IEnumerator IEnumerable.GetEnumerator()
