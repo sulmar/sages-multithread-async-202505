@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 
 Console.WriteLine("Hello, Parallel.For!");
 
+Console.WriteLine($"CPU: {Environment.ProcessorCount} rdzeni");
+
 const int count = 20;
 
 MeasureForExecutionTimeSync(count);
@@ -14,9 +16,15 @@ void MeasureForExecutionTimeParallel(int count)
 {
     var items = Enumerable.Range(0, count);
 
+    var options = new ParallelOptions
+    { 
+        MaxDegreeOfParallelism = 4 // Przepustnica
+    };
+
+
     var stopwatch = Stopwatch.StartNew();
 
-    Parallel.For(0, count, i => DoWork(i));
+    Parallel.For(0, count, options, i => DoWork(i));
 
     stopwatch.Stop();
 
@@ -32,7 +40,7 @@ async Task MeasureForExecutionTimeTask(int count)
     Console.WriteLine("Wykonanie asynchroniczne...");
 
     // dławik / przepustnica
- //   SemaphoreSlim? throtler = new SemaphoreSlim(2);
+    SemaphoreSlim? throtler = new SemaphoreSlim(4);
 
     var stopwatch = Stopwatch.StartNew();
 
@@ -40,11 +48,11 @@ async Task MeasureForExecutionTimeTask(int count)
 
     var tasks = items.Select(async i =>
     {
-      //  await throtler.WaitAsync();
+        await throtler.WaitAsync();
 
         await DoWorkAsync(i);
 
-//        throtler.Release();
+        throtler.Release();
 
     });
     await Task.WhenAll(tasks);
@@ -78,7 +86,7 @@ static async Task DoWorkAsync(int item)
 {
     Console.WriteLine($"Przetwarzanie {item} na wątku {Thread.CurrentThread.ManagedThreadId}");
     Thread.SpinWait(1_000_000); // Obciążenie CPU
-    
+
     await Task.Delay(100); // Symulacja opoźnienia
     Console.WriteLine($"Zakonczono {item} na wątku {Thread.CurrentThread.ManagedThreadId}");
 }
