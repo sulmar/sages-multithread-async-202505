@@ -5,6 +5,8 @@ Console.WriteLine("Hello, BlockingCollection!");
 
 InvoiceProcessor processor = new InvoiceProcessor();
 
+Task.Run(() => processor.Process());
+
 // Symulacja generowania faktur do zaksięgowania
 for (int i = 0; i < 10; i++)
 {
@@ -15,7 +17,7 @@ for (int i = 0; i < 10; i++)
     Thread.Sleep(2000);
 }
 
-Task.Run(() => processor.Process());
+
 
 
 Console.ReadLine();
@@ -23,13 +25,13 @@ Console.ReadLine();
 
 class InvoiceProcessor
 {
-    List<Invoice> invoices = new List<Invoice>();
+    BlockingCollection<Invoice> invoices = new BlockingCollection<Invoice>();
 
     public void Process()
     {
         Console.WriteLine(invoices.Count);
 
-        foreach (var invoice in invoices)
+        foreach (var invoice in invoices.GetConsumingEnumerable())
         {
             Console.WriteLine($"{invoice} is accounting...");
             Thread.Sleep(5000);
