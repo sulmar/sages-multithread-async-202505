@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.VisualBasic;
+using System.Collections;
 using System.Collections.Concurrent;
 
 Console.WriteLine("Hello, BlockingCollection!");
@@ -14,10 +16,9 @@ var invoice = new Invoice
     }
 };
 
-
-foreach (var detail in invoice.Details)
+foreach (var detail in invoice)
 {
-    Console.WriteLine(detail.title);
+    Console.WriteLine(detail);
 }
 
 return;
@@ -123,12 +124,23 @@ class InvoiceProcessor
 //    }
 //}
 
-record Invoice
+record Invoice : IEnumerable<Detail>
 {
     public string Number { get; set; }
     public double TotalAmount { get; set; }
 
-    public IEnumerable<Detail> Details { get; set; }
+    public List<Detail> Details { private get; init; }
+
+    public IEnumerator<Detail> GetEnumerator()
+    {
+        yield return Details[0];
+        yield return Details[1];        
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 }
 
 
